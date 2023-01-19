@@ -1,11 +1,10 @@
 import ipaddress
 
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 
 from contrib.gis.geoip2 import GeoIP2
-
-
 
 # Create your views here.
 def index(request):
@@ -13,9 +12,9 @@ def index(request):
 	#instantiate GeoIP
 	g = GeoIP2()
 
-	#this should be moved to the SETTINGS file
-	default_ip_location = '86.19.240.14' #defaulting it to a rando Leeds UK IP adresss -- it's what we use arbtitratilly in our product  
-	
+	#get a fallback default IP in case all heck breaks loose, so we can target the user to SOMEWHERE
+	default_ip_location = settings.DEFAULT_IP
+
 	#Grab the requestor's IP address -- X_FORWARED_FOR gets priority b/c it'd explictly set on the request
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 	if x_forwarded_for:
@@ -26,7 +25,7 @@ def index(request):
 	#if the url contains an "ip" parameter, use that. Otherwise fallback to the IP from the request headers
 	ip = request.GET.get("ip", http_request_ip)
 
-	#private IPs aren't going to work so no 192.168 or 10.XX or 172.16-32 ranges -- if running locally or behind a proxy you will not see a public IP address, which is required for geolocation
+	#private IPs aren't going to work, so no 192.168 or 10.XX or 172.16-32 ranges -- if running locally or behind a proxy you will not see a public IP address, which is required for geolocation
 	try:
 		if ipaddress.ip_address(ip).is_private:
 			ip = default_ip_location

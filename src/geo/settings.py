@@ -123,6 +123,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#required by the GeoIP module
 GEOIP_PATH = '/usr/share/geoip/'
 GEOIP_CITY = 'GeoLite2-City.mmdb'
+
+#used in our view -- defaulting it to a rando Leeds UK IP adresss -- it's what we use arbtitratilly in our product 
+DEFAULT_IP = '86.19.240.14' 
 
