@@ -2,7 +2,7 @@ import ipaddress
 
 from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from contrib.gis.geoip2 import GeoIP2
 from contrib.gis.geoip2.resources import City
@@ -52,6 +52,6 @@ def index(request):
 
 	
 
-	geolocation = f"IP Address: {ip} | Location: {geo_cities['region']}, {geo_cities['country_code']}"
+	geolocation = {'ip':ip, 'region': geo_cities['region'], 'country': geo_cities['country_code']}
 
-	return HttpResponse(geolocation)
+	return JsonResponse(geolocation)
