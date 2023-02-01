@@ -37,16 +37,8 @@ def index(request):
 	#if the url contains an "ip" parameter, use that. Otherwise fallback to the IP from the request headers
 	ip = request.GET.get("ip", http_request_ip)
 
-	#private IPs aren't going to work, so no 192.168 or 10.XX or 172.16-32 ranges -- if running locally or behind a proxy you will not see a public IP address, which is required for geolocation
-	try:
-		if ipaddress.ip_address(ip).is_private:
-			geo_cities = default_city_obj
-		else:
-			#gotta wrap this in a try except bc if the IP is not in the GeoIP database, it throws an exception
-			try:
-				geo_cities = g.city(ip)
-			except:
-				geo_cities = default_city_obj
+	try:			
+		geo_cities = g.city(ip)			
 	except:
 		geo_cities = default_city_obj # if a garbage IP address was passed in, just use our default
 
